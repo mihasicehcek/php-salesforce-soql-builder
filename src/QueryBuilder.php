@@ -89,7 +89,7 @@ class QueryBuilder
     private function prepareWhereValue($value)
     {
         if(gettype($value) === "string"){
-            $value = '"'.$value.'"';
+            $value = "'".$value."'";
         }
 
         return $value;
