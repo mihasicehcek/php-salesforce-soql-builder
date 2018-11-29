@@ -1,9 +1,7 @@
 {
-    "name": "laravel/laravel",
-    "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "name": "mihasicehcek/php_salesforce_soql_builder",
     "license": "MIT",
-    "type": "project",
+    "type": "library",
     "require": {
         "php": "^7.1"
     },
@@ -29,5 +27,6 @@
         "optimize-autoloader": true
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "description": "SOQL Builder"
 }
