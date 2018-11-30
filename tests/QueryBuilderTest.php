@@ -18,7 +18,7 @@ class QueryBuilderTest extends TestCase
             ->limit(10)
             ->offset(15);
 
-        $this->assertEquals('SELECT Id, Name, Description FROM Account WHERE Name = "Mikhail" ORDER BY Name ASC LIMIT 10 OFFSET 15', $qb->toSoql());
+        $this->assertEquals("SELECT Id, Name, Description FROM Account WHERE Name = 'Mikhail' ORDER BY Name ASC LIMIT 10 OFFSET 15", $qb->toSoql());
     }
 
     public function testWithSeveralOrders()
@@ -40,7 +40,7 @@ class QueryBuilderTest extends TestCase
             ->orWhere('A', '=', 'B')
             ->orWhere('C', '=', 'D');
 
-        $this->assertEquals('SELECT Id, Name, Description FROM Account WHERE A = "B" OR C = "D"', $qb->toSoql());
+        $this->assertEquals('SELECT Id, Name, Description FROM Account WHERE A = \'B\' OR C = \'D\'', $qb->toSoql());
     }
 
     public function testWhereIn()
@@ -51,7 +51,7 @@ class QueryBuilderTest extends TestCase
             ->where('G', '=', 'G')
             ->whereIn('Name', ["A", "B", "C"]);
 
-        $this->assertEquals('SELECT Id, Name FROM Acc WHERE G = "G" AND Name IN ("A", "B", "C")', $qb->toSoql());
+        $this->assertEquals("SELECT Id, Name FROM Acc WHERE G = 'G' AND Name IN ('A', 'B', 'C')", $qb->toSoql());
     }
 
     public function testWhereNotIn()
@@ -62,7 +62,7 @@ class QueryBuilderTest extends TestCase
             ->where('G', '=', 'G')
             ->whereNotIn('Name', ["A", "B", "C"]);
 
-        $this->assertEquals('SELECT Id, Name FROM Acc WHERE G = "G" AND Name NOT IN ("A", "B", "C")', $qb->toSoql());
+        $this->assertEquals("SELECT Id, Name FROM Acc WHERE G = 'G' AND Name NOT IN ('A', 'B', 'C')", $qb->toSoql());
     }
 
     public function testOrWhereIn()
@@ -73,7 +73,7 @@ class QueryBuilderTest extends TestCase
             ->where('G', '=', 'G')
             ->orWhereIn('Name', ["A", "B", "C"]);
 
-        $this->assertEquals('SELECT Id, Name FROM Acc WHERE G = "G" OR Name IN ("A", "B", "C")', $qb->toSoql());
+        $this->assertEquals("SELECT Id, Name FROM Acc WHERE G = 'G' OR Name IN ('A', 'B', 'C')", $qb->toSoql());
     }
 
     public function testOrWhereNotIn()
@@ -84,7 +84,7 @@ class QueryBuilderTest extends TestCase
             ->where('G', '=', 'G')
             ->orWhereNotIn('Name', ["A", "B", "C"]);
 
-        $this->assertEquals('SELECT Id, Name FROM Acc WHERE G = "G" OR Name NOT IN ("A", "B", "C")', $qb->toSoql());
+        $this->assertEquals("SELECT Id, Name FROM Acc WHERE G = 'G' OR Name NOT IN ('A', 'B', 'C')", $qb->toSoql());
     }
 
     public function testQueryWithoutFields()
