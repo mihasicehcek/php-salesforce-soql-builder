@@ -90,6 +90,8 @@ class QueryBuilder
     {
         if(gettype($value) === "string"){
             $value = "'".$value."'";
+        }else if(gettype($value) === "boolean"){
+            $value = $value ? 'true' : 'false';
         }
 
         return $value;

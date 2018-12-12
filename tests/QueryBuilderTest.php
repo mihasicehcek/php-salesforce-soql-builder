@@ -21,6 +21,15 @@ class QueryBuilderTest extends TestCase
         $this->assertEquals("SELECT Id, Name, Description FROM Account WHERE Name = 'Mikhail' ORDER BY Name ASC LIMIT 10 OFFSET 15", $qb->toSoql());
     }
 
+    public function testWithBoolen(){
+        $qb = (new QueryBuilder())
+            ->from('Account')
+            ->select(['Id', 'Name', 'Description'])
+            ->where('IsChecked', '=', true);
+
+        $this->assertEquals("SELECT Id, Name, Description FROM Account WHERE IsChecked = true", $qb->toSoql());
+    }
+
     public function testWithSeveralOrders()
     {
         $qb = (new QueryBuilder())
