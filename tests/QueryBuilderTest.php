@@ -137,4 +137,14 @@ class QueryBuilderTest extends TestCase
         $this->assertEquals('SELECT Id, Name FROM Acc WHERE A > 3 AND B < 8', $qb->toSoql());
     }
 
+    public function testWhereWithNull()
+    {
+        $qb = (new QueryBuilder())
+            ->from('Acc')
+            ->select(['Id', 'Name'])
+            ->where("A", "=", null);
+
+        $this->assertEquals('SELECT Id, Name FROM Acc WHERE A = null', $qb->toSoql());
+    }
+
 }

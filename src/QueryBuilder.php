@@ -136,7 +136,11 @@ class QueryBuilder
                 if($i != 0) {
                     $soql .= ' '.$this->where[$i][3];
                 }
-                $soql .= ' '.$this->where[$i][0].' '.$this->where[$i][1].' '.$this->where[$i][2];
+                $value = $this->where[$i][2];
+                if($value === null){
+                    $value = "null";
+                }
+                $soql .= ' '.$this->where[$i][0].' '.$this->where[$i][1].' '.$value;
             }
         }
 
