@@ -168,4 +168,15 @@ class QueryBuilderTest extends TestCase
         $this->assertEquals('SELECT Id, Name FROM Acc WHERE A = 2019-10-10 OR B = 2019-10-09', $qb->toSoql());
     }
 
+    public function testDuplicateSelect()
+    {
+        $qb = (new QueryBuilder())
+            ->from('Acc')
+            ->addSelect("Id");
+
+        $qb->addSelect("Id");
+
+        $this->assertEquals('SELECT Id FROM Acc', $qb->toSoql());
+    }
+
 }

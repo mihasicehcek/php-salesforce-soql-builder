@@ -146,7 +146,7 @@ class QueryBuilder
         if(!$this->fields) throw new InvalidQueryException('Query must contains fields for select');
 
         $soql = 'SELECT ';
-        $soql .= implode(', ', $this->fields);
+        $soql .= implode(', ', array_unique($this->fields));
         $soql .= ' FROM '.$this->object;
 
         if(count($this->where) > 0){
