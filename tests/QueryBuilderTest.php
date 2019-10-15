@@ -147,4 +147,25 @@ class QueryBuilderTest extends TestCase
         $this->assertEquals('SELECT Id, Name FROM Acc WHERE A = null', $qb->toSoql());
     }
 
+    public function testWhereWithDate()
+    {
+        $qb = (new QueryBuilder())
+            ->from('Acc')
+            ->select(['Id', 'Name'])
+            ->whereDate("A", "=", "2019-10-10");
+
+        $this->assertEquals('SELECT Id, Name FROM Acc WHERE A = 2019-10-10', $qb->toSoql());
+    }
+
+    public function testOrWhereWithDate()
+    {
+        $qb = (new QueryBuilder())
+            ->from('Acc')
+            ->select(['Id', 'Name'])
+            ->whereDate("A", "=", "2019-10-10")
+            ->orWhereDate("B", "=", "2019-10-09");
+
+        $this->assertEquals('SELECT Id, Name FROM Acc WHERE A = 2019-10-10 OR B = 2019-10-09', $qb->toSoql());
+    }
+
 }

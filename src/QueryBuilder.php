@@ -43,6 +43,21 @@ class QueryBuilder
         return $this;
     }
 
+    public function whereDate($column, string $operator, $value, $boolean = 'AND') : self
+    {
+        if ($column instanceof \Closure) {
+            return $this->whereNested($column, $boolean);
+        }
+
+        $this->where[] = [$column, $operator, $this->prepareWhereValue($value, "date"), $boolean];
+        return $this;
+    }
+
+    public function orWhereDate($column, string $operator, $value) : self
+    {
+        return $this->whereDate($column, $operator, $value, 'OR');
+    }
+
     public function orWhere($column, string $operator, $value) : self
     {
         return $this->where($column, $operator, $value, 'OR');
@@ -86,8 +101,12 @@ class QueryBuilder
         return $this;
     }
 
-    private function prepareWhereValue($value)
+    private function prepareWhereValue($value, $forceType = null)
     {
+        if($forceType === "date"){
+            return $value;
+        }
+
         if(gettype($value) === "string"){
             $value = "'".$value."'";
         }else if(gettype($value) === "boolean"){
