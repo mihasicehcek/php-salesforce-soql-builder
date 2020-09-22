@@ -35,20 +35,12 @@ class QueryBuilder
 
     public function where($column, string $operator, $value, $boolean = 'AND') : self
     {
-        if ($column instanceof \Closure) {
-            return $this->whereNested($column, $boolean);
-        }
-
         $this->where[] = [$column, $operator, $this->prepareWhereValue($value), $boolean];
         return $this;
     }
 
     public function whereDate($column, string $operator, $value, $boolean = 'AND') : self
     {
-        if ($column instanceof \Closure) {
-            return $this->whereNested($column, $boolean);
-        }
-
         $this->where[] = [$column, $operator, $this->prepareWhereValue($value, "date"), $boolean];
         return $this;
     }
@@ -101,6 +93,12 @@ class QueryBuilder
         return $this;
     }
 
+    public function whereFunction($column, string $function, $value, $boolean = 'AND')
+    {
+        $this->where[] = [$column, null, $function . '(\'' . $value . '\')', $boolean];
+        return $this;
+    }
+
     private function prepareWhereValue($value, $forceType = null)
     {
         if($forceType === "date"){
@@ -150,16 +148,16 @@ class QueryBuilder
         $soql .= ' FROM '.$this->object;
 
         if(count($this->where) > 0){
-            $soql .= ' WHERE';
+            $soql .= ' WHERE ';
             for($i = 0; $i < count($this->where); $i++){
                 if($i != 0) {
-                    $soql .= ' '.$this->where[$i][3];
+                    $soql .= ' '.$this->where[$i][3].' ';
                 }
                 $value = $this->where[$i][2];
                 if($value === null){
                     $value = "null";
                 }
-                $soql .= ' '.$this->where[$i][0].' '.$this->where[$i][1].' '.$value;
+                $soql .= implode(' ', array_filter([$this->where[$i][0], $this->where[$i][1], $value]));
             }
         }
 
