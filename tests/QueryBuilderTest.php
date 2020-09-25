@@ -179,4 +179,21 @@ class QueryBuilderTest extends TestCase
         $this->assertEquals('SELECT Id FROM Acc', $qb->toSoql());
     }
 
+    public function testWhereFunction()
+    {
+        $actual = (new QueryBuilder())
+            ->from('Object')
+            ->addSelect('Id')
+            ->whereFunction('F', 'func1', 'chs1')
+            ->whereFunction('F', 'func2', 'chs2')
+            ->whereFunction('F', 'func3', 'chs3', 'OR')
+            ->whereFunction('F', 'func4', 'chs4')
+            ->toSoql();
+
+        $this->assertEquals(
+            "SELECT Id FROM Object WHERE F func1('chs1') AND F func2('chs2') OR F func3('chs3') AND F func4('chs4')",
+            $actual
+        );
+    }
+
 }
