@@ -95,7 +95,16 @@ class QueryBuilder
 
     public function whereFunction($column, string $function, $value, $boolean = 'AND')
     {
-        $this->where[] = [$column, null, $function . '(\'' . $value . '\')', $boolean];
+        if (is_array($value)) {
+            foreach($value as &$item){
+                $item = $this->prepareWhereValue($item);
+            }
+            $value = implode(', ', $value);
+        } else {
+            $value = $this->prepareWhereValue($value);
+        }
+
+        $this->where[] = [$column, null, $function . '(' . $value . ')', $boolean];
         return $this;
     }
 
