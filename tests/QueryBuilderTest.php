@@ -196,4 +196,18 @@ class QueryBuilderTest extends TestCase
         );
     }
 
+    public function testWhereFunctionByArray()
+    {
+        $actual = (new QueryBuilder())
+            ->from('Object')
+            ->addSelect('Id')
+            ->whereFunction('F', 'func1', ['chs1;chs2', 'chs3', 'chs4'])
+            ->toSoql();
+
+        $this->assertEquals(
+            "SELECT Id FROM Object WHERE F func1('chs1;chs2', 'chs3', 'chs4')",
+            $actual
+        );
+    }
+
 }
