@@ -118,6 +118,8 @@ class QueryBuilder
             $value = "'".$value."'";
         }else if(gettype($value) === "boolean"){
             $value = $value ? 'true' : 'false';
+        }else if($value === null){
+            $value = "null";
         }
 
         return $value;
@@ -162,11 +164,12 @@ class QueryBuilder
                 if($i != 0) {
                     $soql .= ' '.$this->where[$i][3].' ';
                 }
-                $value = $this->where[$i][2];
-                if($value === null){
-                    $value = "null";
-                }
-                $soql .= implode(' ', array_filter([$this->where[$i][0], $this->where[$i][1], $value]));
+                $soql .= implode(
+                    ' ',
+                    array_filter([$this->where[$i][0], $this->where[$i][1], $this->where[$i][2]], function ($item) {
+                        return $item !== null;
+                    })
+                );
             }
         }
 
