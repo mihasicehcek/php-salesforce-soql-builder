@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\QueryBuilderTest;
+namespace Tests;
 
 use PHPUnit\Framework\TestCase;
 use SalesforceQueryBuilder\Exceptions\InvalidQueryException;
@@ -8,8 +8,8 @@ use SalesforceQueryBuilder\QueryBuilder;
 
 class QueryBuilderTest extends TestCase
 {
-
-    public function testBaseQuery(){
+    public function testBaseQuery()
+    {
         $qb = (new QueryBuilder())
             ->from('Account')
             ->select(['Id', 'Name', 'Description'])
@@ -18,16 +18,28 @@ class QueryBuilderTest extends TestCase
             ->limit(10)
             ->offset(15);
 
-        $this->assertEquals("SELECT Id, Name, Description FROM Account WHERE Name = 'Mikhail' ORDER BY Name ASC LIMIT 10 OFFSET 15", $qb->toSoql());
+        $this->assertEquals("SELECT Id, Name, Description FROM Account WHERE Name = 'Mikhail' ORDER BY Name ASC LIMIT 10 OFFSET 15",
+            $qb->toSoql());
     }
 
-    public function testWithBoolen(){
+    public function testWithBoolean()
+    {
         $qb = (new QueryBuilder())
             ->from('Account')
             ->select(['Id', 'Name', 'Description'])
             ->where('IsChecked', '=', true);
 
         $this->assertEquals("SELECT Id, Name, Description FROM Account WHERE IsChecked = true", $qb->toSoql());
+    }
+
+    public function testWithNumber()
+    {
+        $qb = (new QueryBuilder())
+            ->from('Account')
+            ->select(['Id', 'Name', 'Description'])
+            ->where('Amount', '=', 0);
+
+        $this->assertEquals("SELECT Id, Name, Description FROM Account WHERE Amount = 0", $qb->toSoql());
     }
 
     public function testWithSeveralOrders()
@@ -38,7 +50,8 @@ class QueryBuilderTest extends TestCase
             ->orderBy('Name')
             ->orderByDesc('Description');
 
-        $this->assertEquals('SELECT Id, Name, Description FROM Account ORDER BY Name ASC, Description DESC', $qb->toSoql());
+        $this->assertEquals('SELECT Id, Name, Description FROM Account ORDER BY Name ASC, Description DESC',
+            $qb->toSoql());
     }
 
     public function testOrWhere()
