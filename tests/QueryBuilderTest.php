@@ -223,4 +223,102 @@ class QueryBuilderTest extends TestCase
         );
     }
 
+    public function testConditionalExpressionsCanBeGrouped()
+    {
+        $actual = (new QueryBuilder())
+            ->from('Androids__c')
+            ->addSelect('Id')
+            ->where('Warranty', '=', 'Expired')
+            ->startWhere()
+            ->orWhere('Warranty', '=', 'Active')
+            ->where('Days_Left__c', '<=', '60')
+            ->endWhere()
+            ->toSoql();
+
+        $this->assertEquals("SELECT Id FROM Androids__c WHERE Warranty = 'Expired' OR (Warranty = 'Active' AND Days_Left__c <= '60')", $actual);
+    }
+
+    public function testConditionalsCanbeGroupedAlone()
+    {
+        $actual = (new QueryBuilder())
+            ->from('Androids__c')
+            ->addSelect('Id')
+            ->where('Warranty', '=', 'Expired')
+            ->startWhere()
+            ->where('Days_Left__c', '<=', '60')
+            ->endWhere()
+            ->toSoql();
+
+        $this->assertEquals("SELECT Id FROM Androids__c WHERE Warranty = 'Expired' AND (Days_Left__c <= '60')", $actual);
+    }
+
+    public function testGroupedConditionalExpressionsCanExistsInMultipleLocations()
+    {
+        $actual = (new QueryBuilder())
+            ->from('Androids__c')
+            ->addSelect('Id')
+            ->startWhere()
+            ->where('Warranty', '=', 'Active')
+            ->where('Days_Left__c', '<=', '60')
+            ->endWhere()
+            ->startWhere()
+            ->orWhere('Warranty', '=', 'Expired')
+            ->where('Days_Expired__c', '<=', '30')
+            ->endWhere()
+            ->toSoql();
+
+        $this->assertEquals("SELECT Id FROM Androids__c WHERE (Warranty = 'Active' AND Days_Left__c <= '60') OR (Warranty = 'Expired' AND Days_Expired__c <= '30')", $actual);
+    }
+
+    public function testGroupedConditionalExpressionsCanBeNested()
+    {
+        $actual = (new QueryBuilder())
+            ->from('Androids__c')
+            ->addSelect('Id')
+            ->startWhere()
+            ->startWhere()
+            ->where('Warranty', '=', 'Active')
+            ->where('Days_Left__c', '<=', '60')
+            ->endWhere()
+            ->startWhere()
+            ->orWhere('Warranty', '=', 'Expired')
+            ->where('Days_Expired__c', '<=', '30')
+            ->endWhere()
+            ->orWhere('Select_This_Anyway__c', '=', 'true')
+            ->endWhere()
+            ->toSoql();
+
+        $this->assertEquals("SELECT Id FROM Androids__c WHERE ((Warranty = 'Active' AND Days_Left__c <= '60') OR (Warranty = 'Expired' AND Days_Expired__c <= '30') OR Select_This_Anyway__c = 'true')", $actual);
+    }
+
+    public function testMismatchedGroupingCountsThrowQueryException()
+    {
+        $this->expectException(InvalidQueryException::class);
+
+        $actual = (new QueryBuilder())
+            ->from('Androids__c')
+            ->addSelect('Id')
+            ->startWhere()
+            ->where('Warranty', '=', 'Active')
+            ->toSoql();
+    }
+
+    public function testMissingObjectThrowsQueryException()
+    {
+        $this->expectException(InvalidQueryException::class);
+
+        $actual = (new QueryBuilder())
+            ->from('')
+            ->addSelect('Id')
+            ->toSoql();
+    }
+
+    public function testMissingFieldsThrowsQueryException()
+    {
+        $this->expectException(InvalidQueryException::class);
+
+        $actual = (new QueryBuilder())
+            ->from('Androids')
+            ->toSoql();
+    }
 }
